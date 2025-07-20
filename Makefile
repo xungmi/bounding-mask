@@ -29,15 +29,17 @@ build-image:
 	--build-arg TORCH_ARCH=$(TORCH_CUDA_ARCH_LIST) \
 	-t gsa:v0 .
 run:
-ifeq (,$(wildcard ./sam_vit_h_4b8939.pth))
-	wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-endif
-ifeq (,$(wildcard ./groundingdino_swint_ogc.pth))
-	wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-endif
-	docker run --gpus all -it --rm --net=host --privileged \
+# ifeq (,$(wildcard ./sam_vit_h_4b8939.pth))
+# 	wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+# endif
+# ifeq (,$(wildcard ./groundingdino_swint_ogc.pth))
+# 	wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+# endif
+	docker run --gpus all -it -d --net=host --privileged \
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
-	-v "${PWD}":/home/appuser/Grounded-Segment-Anything \
-	-e DISPLAY=$DISPLAY \
+	-v $(shell pwd):/home/xungcase/code/Grounded-Segment-Anything \
+	-e DISPLAY=$(DISPLAY) \
 	--name=gsa \
-	--ipc=host -it gsa:v0
+	--ipc=host \
+	gsa:v0 /bin/bash
+ 
